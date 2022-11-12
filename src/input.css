@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 body {
-    background-color: rebeccapurple;
     margin: 0;
     padding: 0;
 }
@@ -26,14 +25,15 @@ body {
 
 #SVG {
     float: right;
-    width: 75%;
+    width: 90%;
     height: 45rem;
-    background-color: rgb(97, 25, 97);
+    background-color: rgb(63, 43, 177);
 }
 
 .side {
     width: 25%;
     float: left;
+    background-color: rgba(7, 7, 70, 0.777);
 }
 
 @media screen and (max-width: 768px) {
@@ -54,7 +54,8 @@ body {
         display: none;
     }
     svg {
-        margin-left: 40%;
+        width: 100%;
+        margin-left: 30%;
     }
     .ml-3.mlt {
         margin-left: -40px;
