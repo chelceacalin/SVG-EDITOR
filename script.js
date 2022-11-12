@@ -1,23 +1,28 @@
+// INITIALIZE CONTROLS
 let SVG = document.getElementById('SVG');
 let NS = "http://www.w3.org/2000/svg";
+let backgroundSpecific = document.getElementById("backgroundSpecific");
 
-let square;
-let circle;
-let cntNumarObiecteDesenate = 0;
-let eraser = document.getElementById("eraseEverything");
-let eraseSpecific = -1;
+//Buttons
 let btnSquare = document.getElementById("SQUARE");
 let btnCircle = document.getElementById("CIRCLE");
 let btnLine = document.getElementById("LINE");
-let NrObiecteDesenate = document.getElementById("nrObiecteDesenate");
+let undoButton = document.getElementById("undoButton");
+let redoButton = document.getElementById("redoButton");
 let eraseoneItem = document.getElementById("eraseoneItem");
+let eraser = document.getElementById("eraseEverything");
+let NrObiecteDesenate = document.getElementById("nrObiecteDesenate");
+
+//Utils
+let square;
+let circle;
+let countDrawnObjects = 0;
+let eraseSpecific = -1;
 let want_to_delete = false;
-
-let backgroundSpecific = document.getElementById("backgroundSpecific");
-
-backgroundSpecific.setAttribute("class", "flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700");
+let arrayDeleted = [];
 
 
+//Classes
 class Square_Init {
     constructor(name, marginLeft, marginTop, width, height, color) {
         this.name = name;
@@ -37,8 +42,7 @@ class Square_Init {
         this.name.setAttributeNS(null, 'height', this.height);
         this.name.setAttributeNS(null, 'fill', this.fill);
         SVG.appendChild(this.name);
-        cntNumarObiecteDesenate++;
-
+        countDrawnObjects++;
     }
 
     getPositionX() {
@@ -60,10 +64,12 @@ class Square_Init {
         SVG.removeChild(this.name);
     }
 
+    toString() {
+        console.log(this.name + "\n" +
+            this.x + "\n" + this.y + "\n" + this.height + "\n" + this.width + "\n" + this.fill);
+    }
 
 }
-
-
 
 class Circle_Init {
     constructor(name, marginLeft, marginTop, radiusX, radiusY, color) {
@@ -76,8 +82,6 @@ class Circle_Init {
     }
 
     drawCircle() {
-
-
         this.name = document.createElementNS(NS, 'ellipse');
         this.name.setAttributeNS(null, 'cx', this.x);
         this.name.setAttributeNS(null, 'cy', this.y);
@@ -85,8 +89,7 @@ class Circle_Init {
         this.name.setAttributeNS(null, 'ry', this.radiusY);
         this.name.setAttributeNS(null, 'fill', this.fill);
         SVG.appendChild(this.name);
-        cntNumarObiecteDesenate++;
-
+        countDrawnObjects++;
     }
 
     getPositionX() {
@@ -106,6 +109,11 @@ class Circle_Init {
 
     removeObject() {
         SVG.removeChild(this.name);
+    }
+
+    toString() {
+        console.log(this.name + "\n" +
+            this.x + "\n" + this.y + "\n" + this.radiusX + "\n" + this.radiusY + "\n" + this.fill);
     }
 }
 
@@ -121,7 +129,6 @@ class Line_Init {
     }
 
     drawLine() {
-
         this.name = document.createElementNS(NS, 'line');
         this.name.setAttributeNS(null, 'stroke', this.fill);
         this.name.setAttributeNS(null, 'x1', this.xStarting);
@@ -130,7 +137,7 @@ class Line_Init {
         this.name.setAttributeNS(null, 'y2', this.yEnding);
         this.name.setAttributeNS(null, 'stroke-width', 5);
         SVG.appendChild(this.name);
-        cntNumarObiecteDesenate++;
+        countDrawnObjects++;
     }
 
     getStartingX() {
@@ -143,7 +150,6 @@ class Line_Init {
     getStartingY() {
         return this.yStarting;
     }
-
 
     getEndingY() {
         return this.yEnding;
@@ -160,36 +166,37 @@ class Line_Init {
     removeObject() {
         SVG.removeChild(this.name);
     }
+
+    toString() {
+        console.log(this.name + "\n" +
+            this.xStarting + "\n" + this.xEnding + "\n" + this.yStarting + "\n" + this.yEnding + "\n" + this.fill);
+    }
 }
 
 
+// Click Listeners
 btnLine.addEventListener('click', () => {
     let line = new Line_Init("Line", 250, 250, 350, 350, "blue");
     line.drawLine();
-
-    NrObiecteDesenate.innerHTML = cntNumarObiecteDesenate;
+    NrObiecteDesenate.innerHTML = countDrawnObjects;
 });
-
-
 
 btnCircle.addEventListener('click', () => {
     let circle = new Circle_Init("Circle", 100, 250, 50, 50, "blue");
     circle.drawCircle();
-
-    NrObiecteDesenate.innerHTML = cntNumarObiecteDesenate;
+    NrObiecteDesenate.innerHTML = countDrawnObjects;
 });
 
 btnSquare.addEventListener('click', () => {
     let square = new Square_Init("Square", 50, 50, 100, 100, "red");
     square.drawSquare();
-    NrObiecteDesenate.innerHTML = cntNumarObiecteDesenate;
-
+    NrObiecteDesenate.innerHTML = countDrawnObjects;
 });
 
+//Delete all objects
 eraser.addEventListener('click', () => {
-
-    cntNumarObiecteDesenate = 0;
-    NrObiecteDesenate.innerHTML = cntNumarObiecteDesenate;
+    countDrawnObjects = 0;
+    NrObiecteDesenate.innerHTML = countDrawnObjects;
     while (SVG.firstChild) {
         SVG.removeChild(SVG.firstChild);
     }
@@ -199,39 +206,61 @@ SVG.addEventListener('click', (item) => {
     // eraseSpecific = item.target;
 });
 
+
+// Get back the last objects and also append to the deleted items list
+undoButton.addEventListener('click', () => {
+    if (SVG.lastChild) {
+        arrayDeleted.push(SVG.lastChild);
+        SVG.removeChild(SVG.lastChild);
+        countDrawnObjects--;
+        NrObiecteDesenate.innerHTML = countDrawnObjects;
+    } else {
+        console.log("Sunteti la final");
+    }
+});
+
+// Put back the deleted items
+redoButton.addEventListener('click', () => {
+    SVG.appendChild(arrayDeleted.pop());
+    countDrawnObjects++;
+    NrObiecteDesenate.innerHTML = countDrawnObjects;
+
+});
+
+// When we press click
 SVG.addEventListener('mousedown', (item) => {
     if (want_to_delete === true) {
         console.log(eraseSpecific);
     }
 });
 
-SVG.addEventListener('mouseup', (item) => {
-    if (want_to_delete === true) {
-        if (item.target.tagName === "rect" || item.target.tagName === "ellipse" || item.target.tagName === "line") {
-            cntNumarObiecteDesenate--;
-            NrObiecteDesenate.innerHTML = cntNumarObiecteDesenate;
-            SVG.removeChild(item.target);
-        }
-    }
-});
-SVG.addEventListener('mousemove', (item) => {
-
-    if (want_to_delete === true) {
-
-        eraseSpecific = item.target;
-    }
-
-
-});
-
+// We set the boolean variable to true
 eraseoneItem.addEventListener('click', () => {
     want_to_delete = !want_to_delete;
     if (want_to_delete === true) {
-        // console.log('Want to Delete');
         if (want_to_delete === true) {
             backgroundSpecific.setAttribute("style", "background-color:green;");
         }
     } else {
         backgroundSpecific.setAttribute("style", "hover:background-color:rgba(139, 148, 150, 0.205);");
+    }
+});
+
+// Delete specific item after we let go of the mouse
+SVG.addEventListener('mouseup', (item) => {
+    if (want_to_delete === true) {
+        if (item.target.tagName === "rect" || item.target.tagName === "ellipse" || item.target.tagName === "line") {
+            countDrawnObjects--;
+            NrObiecteDesenate.innerHTML = countDrawnObjects;
+            arrayDeleted.push(item.target);
+            SVG.removeChild(item.target);
+        }
+    }
+});
+
+// Find position to delete
+SVG.addEventListener('mousemove', (item) => {
+    if (want_to_delete === true) {
+        eraseSpecific = item.target;
     }
 });
