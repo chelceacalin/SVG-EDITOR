@@ -128,6 +128,7 @@ class Line_Init {
         this.name.setAttributeNS(null, 'y1', this.xEnding);
         this.name.setAttributeNS(null, 'x2', this.yStarting);
         this.name.setAttributeNS(null, 'y2', this.yEnding);
+        this.name.setAttributeNS(null, 'stroke-width', 5);
         SVG.appendChild(this.name);
         cntNumarObiecteDesenate++;
     }
