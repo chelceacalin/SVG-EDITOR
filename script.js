@@ -12,6 +12,7 @@ let redoButton = document.getElementById("redoButton");
 let eraseoneItem = document.getElementById("eraseoneItem");
 let eraser = document.getElementById("eraseEverything");
 let NrObiecteDesenate = document.getElementById("nrObiecteDesenate");
+let downloadButton = document.getElementById("download");
 
 //Utils
 let square;
@@ -20,7 +21,8 @@ let countDrawnObjects = 0;
 let eraseSpecific = -1;
 let want_to_delete = false;
 let arrayDeleted = [];
-
+let shouldBeDragged = false;
+let selectedItem = 0;
 
 //Classes
 class Square_Init {
@@ -41,6 +43,23 @@ class Square_Init {
         this.name.setAttributeNS(null, 'width', this.width);
         this.name.setAttributeNS(null, 'height', this.height);
         this.name.setAttributeNS(null, 'fill', this.fill);
+
+
+        this.name.addEventListener('mousedown', function(e) {
+            shouldBeDragged = !shouldBeDragged;
+            if (shouldBeDragged) {
+                selectedItem = this;
+                console.log(selectedItem.getAttribute('x'), selectedItem.getAttribute('y'));
+                SVG.addEventListener('mousemove', function(e) {
+                    if (shouldBeDragged && selectedItem != 0) {
+                        selectedItem.setAttribute('x', e.clientX - 480);
+                        selectedItem.setAttribute('y', e.clientY - 110);
+                    }
+                });
+            }
+        });
+
+
         SVG.appendChild(this.name);
         countDrawnObjects++;
     }
@@ -55,6 +74,12 @@ class Square_Init {
         return this.color;
     }
 
+    setPosition(x) {
+        this.x = x;
+    }
+    setPosition(y) {
+        this.y = y;
+    }
     setColor(color) {
         this.fill = color;
     }
@@ -69,7 +94,13 @@ class Square_Init {
             this.x + "\n" + this.y + "\n" + this.height + "\n" + this.width + "\n" + this.fill);
     }
 
+
+
 }
+
+
+
+
 
 class Circle_Init {
     constructor(name, marginLeft, marginTop, radiusX, radiusY, color) {
@@ -88,6 +119,25 @@ class Circle_Init {
         this.name.setAttributeNS(null, 'rx', this.radiusX);
         this.name.setAttributeNS(null, 'ry', this.radiusY);
         this.name.setAttributeNS(null, 'fill', this.fill);
+
+
+        //console.log("shouldBeDragged: " + shouldBeDragged);
+
+        this.name.addEventListener('mousedown', function(e) {
+            shouldBeDragged = !shouldBeDragged;
+            if (shouldBeDragged) {
+                selectedItem = this;
+                console.log(selectedItem.getAttribute('x'), selectedItem.getAttribute('y'));
+                SVG.addEventListener('mousemove', function(e) {
+                    if (shouldBeDragged && selectedItem != 0) {
+                        selectedItem.setAttribute('cx', e.clientX - 400);
+                        selectedItem.setAttribute('cy', e.clientY - 70);
+                    }
+                });
+            }
+        });
+
+
         SVG.appendChild(this.name);
         countDrawnObjects++;
     }
@@ -135,7 +185,27 @@ class Line_Init {
         this.name.setAttributeNS(null, 'y1', this.xEnding);
         this.name.setAttributeNS(null, 'x2', this.yStarting);
         this.name.setAttributeNS(null, 'y2', this.yEnding);
-        this.name.setAttributeNS(null, 'stroke-width', 5);
+        this.name.setAttributeNS(null, 'stroke-width', 8);
+
+        this.name.addEventListener('mousedown', function(e) {
+            shouldBeDragged = !shouldBeDragged;
+            if (shouldBeDragged) {
+                selectedItem = this;
+                SVG.addEventListener('mousemove', function(e) {
+                    if (shouldBeDragged && selectedItem != 0) {
+
+                        console.log(selectedItem.getAttribute('y'), e.clientY - 500);
+
+                        selectedItem.setAttribute('x1', e.clientX - 500);
+                        selectedItem.setAttribute('x2', e.clientX - 500 + 150);
+                        selectedItem.setAttribute('y1', e.clientY - 500);
+                        selectedItem.setAttribute('y2', e.clientY - 300);
+                    }
+                });
+            }
+        });
+
+
         SVG.appendChild(this.name);
         countDrawnObjects++;
     }
@@ -227,12 +297,14 @@ redoButton.addEventListener('click', () => {
 
 });
 
-// When we press click
+// When we press click down
 SVG.addEventListener('mousedown', (item) => {
     if (want_to_delete === true) {
         console.log(eraseSpecific);
     }
 });
+
+
 
 // We set the boolean variable to true
 eraseoneItem.addEventListener('click', () => {
@@ -263,4 +335,27 @@ SVG.addEventListener('mousemove', (item) => {
     if (want_to_delete === true) {
         eraseSpecific = item.target;
     }
+
 });
+
+
+SVG.addEventListener('mouseup', (elem) => {
+    elem.preventDefault();
+    shouldBeDragged = false;
+});
+
+
+
+
+
+
+//Ability to download the svg
+function downloadSVG() {
+    const blob = new Blob([SVG.toString()]);
+    const element = document.createElement("a");
+    element.download = "project.svg";
+    element.href = window.URL.createObjectURL(blob);
+    element.click();
+    element.remove();
+}
+downloadButton.addEventListener('click', downloadSVG);
