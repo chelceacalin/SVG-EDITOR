@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+    background-color: rebeccapurple;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    min-height: 100%;
+}
+
+.title {
+    color: white;
+    margin-top: 25px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-weight: bold;
+    font-size: 2.3rem;
+    margin-left: 40%;
+}
+
+#SVG {
+    float: right;
+    width: 75%;
+    height: 45rem;
+    background-color: rgb(97, 25, 97);
+}
+
+.side {
+    width: 25%;
+    float: left;
+}
+
+@media screen and (max-width: 768px) {
+    .side {
+        width: 7rem;
+        height: 20%;
+        position: absolute;
+    }
+    li {
+        justify-items: center;
+        align-items: center;
+    }
+    .font_mediun {
+        font-size: 1px;
+    }
+    .block,
+    .whitespace-nowrap {
+        display: none;
+    }
+    svg {
+        margin-left: 40%;
+    }
+    .ml-3.mlt {
+        margin-left: -40px;
+    }
+    #ppEye {
+        display: none;
+    }
+    #nrObiecteDesenate {
+        margin-left: -30%;
+    }
+    #ppOptions {
+        display: none;
+    }
+}
