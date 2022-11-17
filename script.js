@@ -129,7 +129,6 @@ class Square_Init {
 
 
 
-
 class Circle_Init {
     constructor(name, marginLeft, marginTop, radiusX, radiusY, color) {
         this.name = name;
@@ -221,22 +220,28 @@ class Line_Init {
         this.name.addEventListener('click', function(e) {
             selectedForColorChange = this;
             if (makeColorsChangeable.checked === true)
-                selectedForColorChange.setAttribute('fill', colorPickerColor.value);
+                selectedForColorChange.setAttribute('stroke', colorPickerColor.value);
         });
+
+
 
         this.name.addEventListener('mousedown', function(e) {
             shouldBeDragged = !shouldBeDragged;
+            selectedItem = this;
+            console.log(selectedItem.getAttribute('x1'), e.clientX - 200);
+
+
             if (shouldBeDragged) {
-                selectedItem = this;
+
                 SVG.addEventListener('mousemove', function(e) {
                     if (shouldBeDragged && selectedItem != 0) {
 
-                        console.log(selectedItem.getAttribute('y'), e.clientY - lineIndexing.x1minus);
+                        selectedItem.setAttribute('x1', e.clientX - 430);
+                        selectedItem.setAttribute('y1', e.clientY + 20 - 100);
+                        selectedItem.setAttribute('x2', e.clientX - 430 + 100);
+                        selectedItem.setAttribute('y2', e.clientY + 100 - 100);
 
-                        selectedItem.setAttribute('x1', e.clientX - lineIndexing.x1minus);
-                        selectedItem.setAttribute('x2', e.clientX - lineIndexing.x2minus);
-                        selectedItem.setAttribute('y1', e.clientY - lineIndexing.y1minus);
-                        selectedItem.setAttribute('y2', e.clientY - lineIndexing.y2minus);
+
                     }
                 });
             }
@@ -283,7 +288,7 @@ class Line_Init {
 
 // Click Listeners
 btnLine.addEventListener('click', () => {
-    let line = new Line_Init("Line", 250, 250, 350, 350, colorPickerColor.value);
+    let line = new Line_Init("Line", 250, 250, 350, 330, colorPickerColor.value);
     line.drawLine();
     NrObiecteDesenate.innerHTML = countDrawnObjects;
 });
