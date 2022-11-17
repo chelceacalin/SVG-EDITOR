@@ -242,6 +242,35 @@ class Point_Init {
         this.name.setAttributeNS(null, 'ry', this.radiusY);
         this.name.setAttributeNS(null, 'fill', this.fill);
 
+
+
+
+        this.name.addEventListener('click', function(e) {
+            selectedForColorChange = this;
+            if (makeColorsChangeable.checked === true) {
+                selectedForColorChange.setAttribute('fill', colorPickerColor.value);
+                selectedForColorChange.setAttribute('rx', heightOfObject.value - 95);
+                selectedForColorChange.setAttribute('ry', widthOfObject.value - 95);
+            }
+
+        });
+
+        this.name.addEventListener('mousedown', function(e) {
+            shouldBeDragged = !shouldBeDragged;
+            if (shouldBeDragged) {
+                selectedItem = this;
+                console.log(selectedItem.getAttribute('x'), selectedItem.getAttribute('y'));
+                SVG.addEventListener('mousemove', function(e) {
+                    if (shouldBeDragged && selectedItem != 0) {
+                        selectedItem.setAttribute('cx', e.clientX - circleIndexing.xminus - 24);
+                        selectedItem.setAttribute('cy', e.clientY - circleIndexing.yminus);
+                    }
+                });
+            }
+        });
+
+
+
         SVG.appendChild(this.name);
 
 
