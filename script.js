@@ -16,6 +16,12 @@ let downloadButton = document.getElementById("download");
 let colorPickerColor = document.getElementById("colorPickerColor");
 let makeColorsChangeable = document.getElementById("default-checkbox");
 
+//Edit Properties
+var heightOfObject = document.getElementById("range");
+var widthOfObject = document.getElementById("widthEverything");
+var lineStrokeWeight = document.getElementById("lineStrokeWeight");
+var backgroundcolorSVG = document.getElementById("backgroundcolorSVG");
+
 
 //Utils
 let square;
@@ -68,8 +74,14 @@ class Square_Init {
 
         this.name.addEventListener('click', function(e) {
             selectedForColorChange = this;
-            if (makeColorsChangeable.checked === true)
+            if (makeColorsChangeable.checked === true) {
                 selectedForColorChange.setAttribute('fill', colorPickerColor.value);
+                selectedForColorChange.setAttribute('height', heightOfObject.value);
+                selectedForColorChange.setAttribute('width', widthOfObject.value);
+                //  selectedItem.setAttribute("transform", "rotate(45)");
+            }
+
+
         });
 
 
@@ -81,7 +93,8 @@ class Square_Init {
                 SVG.addEventListener('mousemove', function(e) {
                     if (shouldBeDragged && selectedItem != 0) {
                         selectedItem.setAttribute('x', e.clientX - squareIndexing.xminus);
-                        selectedItem.setAttribute('y', e.clientY - squareIndexing.yminus);
+                        selectedItem.setAttribute('y', e.clientY + 2 - squareIndexing.yminus);
+
                     }
                 });
             }
@@ -149,8 +162,12 @@ class Circle_Init {
 
         this.name.addEventListener('click', function(e) {
             selectedForColorChange = this;
-            if (makeColorsChangeable.checked === true)
+            if (makeColorsChangeable.checked === true) {
                 selectedForColorChange.setAttribute('fill', colorPickerColor.value);
+                selectedForColorChange.setAttribute('rx', heightOfObject.value - 50);
+                selectedForColorChange.setAttribute('ry', widthOfObject.value - 50);
+            }
+
         });
 
         this.name.addEventListener('mousedown', function(e) {
@@ -215,12 +232,22 @@ class Line_Init {
         this.name.setAttributeNS(null, 'y1', this.xEnding);
         this.name.setAttributeNS(null, 'x2', this.yStarting);
         this.name.setAttributeNS(null, 'y2', this.yEnding);
-        this.name.setAttributeNS(null, 'stroke-width', 8);
+
+        if (makeColorsChangeable.checked === true) {
+            this.name.setAttributeNS(null, 'stroke-width', lineStrokeWeight.value);
+
+        } else {
+            this.name.setAttributeNS(null, 'stroke-width', 8);
+
+        }
 
         this.name.addEventListener('click', function(e) {
             selectedForColorChange = this;
-            if (makeColorsChangeable.checked === true)
+            if (makeColorsChangeable.checked === true) {
+                selectedForColorChange.setAttribute('stroke-width', lineStrokeWeight.value);
                 selectedForColorChange.setAttribute('stroke', colorPickerColor.value);
+            }
+
         });
 
 
@@ -288,19 +315,32 @@ class Line_Init {
 
 // Click Listeners
 btnLine.addEventListener('click', () => {
+
     let line = new Line_Init("Line", 250, 250, 350, 330, colorPickerColor.value);
     line.drawLine();
     NrObiecteDesenate.innerHTML = countDrawnObjects;
 });
 
 btnCircle.addEventListener('click', () => {
-    let circle = new Circle_Init("Circle", 100, 250, 50, 50, colorPickerColor.value);
+    let circle;
+    if (makeColorsChangeable.checked === true) {
+        circle = new Circle_Init("Circle", 100, 250, widthOfObject.value - 50, heightOfObject.value - 50, colorPickerColor.value);
+    } else {
+        circle = new Circle_Init("Circle", 100, 250, 50, 50, colorPickerColor.value);
+    }
     circle.drawCircle();
     NrObiecteDesenate.innerHTML = countDrawnObjects;
 });
 
 btnSquare.addEventListener('click', () => {
-    let square = new Square_Init("Square", 50, 50, 100, 100, colorPickerColor.value);
+    let square;
+    if (makeColorsChangeable.checked === true) {
+        square = new Square_Init("Square", 50, 50, widthOfObject.value, heightOfObject.value, colorPickerColor.value);
+
+    } else {
+        square = new Square_Init("Square", 50, 50, 100, 100, colorPickerColor.value);
+
+    }
     square.drawSquare();
     NrObiecteDesenate.innerHTML = countDrawnObjects;
 });
@@ -316,6 +356,11 @@ eraser.addEventListener('click', () => {
 
 SVG.addEventListener('click', (item) => {
     // eraseSpecific = item.target;
+
+
+    if (makeColorsChangeable.checked === true) {
+        SVG.setAttribute("style", "background-color:" + backgroundcolorSVG.value);
+    }
 });
 
 
@@ -338,6 +383,12 @@ redoButton.addEventListener('click', () => {
     NrObiecteDesenate.innerHTML = countDrawnObjects;
 
 });
+
+// editHeight.addEventListener('click', () => {
+//     //console.log(editHeight.value);
+
+// });
+
 
 // When we press click down
 SVG.addEventListener('mousedown', (item) => {
@@ -384,9 +435,12 @@ SVG.addEventListener('mousemove', (item) => {
 SVG.addEventListener('mouseup', (elem) => {
     elem.preventDefault();
     shouldBeDragged = false;
-    console.log(colorPickerColor.value);
+    //console.log(colorPickerColor.value);
 });
 
+heightOfObject.addEventListener('mouseup', () => {
+    console.log(heightOfObject.value);
+});
 
 
 
