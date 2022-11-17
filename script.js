@@ -15,7 +15,9 @@ let NrObiecteDesenate = document.getElementById("nrObiecteDesenate");
 let downloadButton = document.getElementById("download");
 let colorPickerColor = document.getElementById("colorPickerColor");
 let makeColorsChangeable = document.getElementById("default-checkbox");
-
+let EnablePoints = document.getElementById("EnablePoints");
+let ShouldChangeBackground = document.getElementById("ShouldChangeBackground");
+let pointsEnabled = false;
 //Edit Properties
 var heightOfObject = document.getElementById("range");
 var widthOfObject = document.getElementById("widthEverything");
@@ -102,7 +104,8 @@ class Square_Init {
 
 
         SVG.appendChild(this.name);
-        countDrawnObjects++;
+        if (this.name !== "Point")
+            countDrawnObjects++;
     }
 
     getPositionX() {
@@ -186,7 +189,62 @@ class Circle_Init {
 
 
         SVG.appendChild(this.name);
-        countDrawnObjects++;
+
+
+
+        if (this.name !== "Point") {
+            countDrawnObjects++;
+        }
+    }
+
+    getPositionX() {
+        return this.x;
+    }
+    getPositionY() {
+        return this.y;
+    }
+
+    getColor() {
+        return this.color;
+    }
+
+    setColor(color) {
+        this.fill = color;
+    }
+
+    removeObject() {
+        SVG.removeChild(this.name);
+    }
+
+    toString() {
+        console.log(this.name + "\n" +
+            this.x + "\n" + this.y + "\n" + this.radiusX + "\n" + this.radiusY + "\n" + this.fill);
+    }
+}
+
+
+
+class Point_Init {
+    constructor(name, marginLeft, marginTop, radiusX, radiusY, color) {
+        this.name = name;
+        this.x = marginLeft;
+        this.y = marginTop;
+        this.radiusX = radiusX;
+        this.radiusY = radiusY;
+        this.fill = color;
+    }
+
+    drawPoints() {
+        this.name = document.createElementNS(NS, 'ellipse');
+        this.name.setAttributeNS(null, 'cx', this.x);
+        this.name.setAttributeNS(null, 'cy', this.y);
+        this.name.setAttributeNS(null, 'rx', this.radiusX);
+        this.name.setAttributeNS(null, 'ry', this.radiusY);
+        this.name.setAttributeNS(null, 'fill', this.fill);
+
+        SVG.appendChild(this.name);
+
+
     }
 
     getPositionX() {
@@ -276,7 +334,8 @@ class Line_Init {
 
 
         SVG.appendChild(this.name);
-        countDrawnObjects++;
+        if (this.name !== "Point")
+            countDrawnObjects++;
     }
 
     getStartingX() {
@@ -357,8 +416,7 @@ eraser.addEventListener('click', () => {
 SVG.addEventListener('click', (item) => {
     // eraseSpecific = item.target;
 
-
-    if (makeColorsChangeable.checked === true) {
+    if (ShouldChangeBackground.checked === true) {
         SVG.setAttribute("style", "background-color:" + backgroundcolorSVG.value);
     }
 });
@@ -374,6 +432,11 @@ undoButton.addEventListener('click', () => {
     } else {
         console.log("Sunteti la final");
     }
+});
+
+//We let the user draw points
+EnablePoints.addEventListener('click', () => {
+    pointsEnabled = !pointsEnabled;
 });
 
 // Put back the deleted items
@@ -442,6 +505,15 @@ heightOfObject.addEventListener('mouseup', () => {
     console.log(heightOfObject.value);
 });
 
+
+window.addEventListener('mousemove', (mousePosition) => {
+    if (pointsEnabled === true) {
+        let point = new Point_Init("Point", mousePosition.clientX - 270, mousePosition.clientY - 70, 5, 5, colorPickerColor.value);
+        point.drawPoints();
+
+    }
+
+});
 
 
 
