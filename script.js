@@ -449,15 +449,22 @@ SVG.addEventListener('click', (item) => {
     if (ShouldChangeBackground.checked === true) {
         SVG.setAttribute("style", "background-color:" + backgroundcolorSVG.value);
     }
+
+    console.log(item);
 });
 
 
 // Get back the last objects and also append to the deleted items list
-undoButton.addEventListener('click', () => {
+undoButton.addEventListener('click', (event) => {
     if (SVG.lastChild) {
         arrayDeleted.push(SVG.lastChild);
+
+        if (!(SVG.lastChild.getAttribute('rx') == 5)) {
+            countDrawnObjects--;
+        }
+
         SVG.removeChild(SVG.lastChild);
-        countDrawnObjects--;
+
         NrObiecteDesenate.innerHTML = countDrawnObjects;
     } else {
         console.log("Sunteti la final");
@@ -472,7 +479,10 @@ EnablePoints.addEventListener('click', () => {
 // Put back the deleted items
 redoButton.addEventListener('click', () => {
     SVG.appendChild(arrayDeleted.pop());
-    countDrawnObjects++;
+    if (!(SVG.lastChild.getAttribute('rx') == 5)) {
+        countDrawnObjects++;
+
+    }
     NrObiecteDesenate.innerHTML = countDrawnObjects;
 
 });
@@ -552,14 +562,7 @@ function downloadSvg(name) {
     var svg = document.getElementById('SVG');
     var serializer = new XMLSerializer();
     var source = serializer.serializeToString(svg);
-    // source = source.replace(/(\w+)?:?xlink=/g, 'xmlns:xlink=');
-    // source = source.replace(/ns\d+:href/g, 'xlink:href');
-    // if (!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
-    //     source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
-    // }
-    // if (!source.match(/^<svg[^>]+"http\:\/\/www\.w3\.org\/1999\/xlink"/)) {
-    //     source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
-    // }
+
     var preface = '<?xml version="1.0" standalone="no"?>\r\n';
     var svgBlob = new Blob([preface, source], { type: "image/svg+xml;charset=utf-8" });
     var svgUrl = URL.createObjectURL(svgBlob);
@@ -571,7 +574,5 @@ function downloadSvg(name) {
     document.body.removeChild(downloadLink);
 }
 
-downloadButtonPng.addEventListener('click', () => {
-    console.log('downloadButtonPng');
-});
+
 downloadButton.addEventListener('click', () => { downloadSvg("SVG_EDITOR") });
