@@ -13,6 +13,7 @@ let eraseoneItem = document.getElementById("eraseoneItem");
 let eraser = document.getElementById("eraseEverything");
 let NrObiecteDesenate = document.getElementById("nrObiecteDesenate");
 let downloadButton = document.getElementById("download");
+let downloadButtonPng = document.getElementById("download_png");
 let colorPickerColor = document.getElementById("colorPickerColor");
 let makeColorsChangeable = document.getElementById("default-checkbox");
 let EnablePoints = document.getElementById("EnablePoints");
@@ -546,14 +547,31 @@ window.addEventListener('mousemove', (mousePosition) => {
 
 
 
+function downloadSvg(name) {
 
-//Ability to download the svg
-function downloadSVG() {
-    const blob = new Blob([SVG.toString()]);
-    const element = document.createElement("a");
-    element.download = "project.svg";
-    element.href = window.URL.createObjectURL(blob);
-    element.click();
-    element.remove();
+    var svg = document.getElementById('SVG');
+    var serializer = new XMLSerializer();
+    var source = serializer.serializeToString(svg);
+    // source = source.replace(/(\w+)?:?xlink=/g, 'xmlns:xlink=');
+    // source = source.replace(/ns\d+:href/g, 'xlink:href');
+    // if (!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
+    //     source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+    // }
+    // if (!source.match(/^<svg[^>]+"http\:\/\/www\.w3\.org\/1999\/xlink"/)) {
+    //     source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
+    // }
+    var preface = '<?xml version="1.0" standalone="no"?>\r\n';
+    var svgBlob = new Blob([preface, source], { type: "image/svg+xml;charset=utf-8" });
+    var svgUrl = URL.createObjectURL(svgBlob);
+    var downloadLink = document.createElement("a");
+    downloadLink.href = svgUrl;
+    downloadLink.download = name;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
 }
-downloadButton.addEventListener('click', downloadSVG);
+
+downloadButtonPng.addEventListener('click', () => {
+    console.log('downloadButtonPng');
+});
+downloadButton.addEventListener('click', () => { downloadSvg("SVG_EDITOR") });
