@@ -563,16 +563,14 @@ function downloadSvg(name) {
     var svg = document.getElementById('SVG');
     var serializer = new XMLSerializer();
     var source = serializer.serializeToString(svg);
-    var preface = '<?xml version="1.0" standalone="no"?>\r\n';
-    var svgBlob = new Blob([preface, source], { type: "image/svg+xml;charset=utf-8" });
-    var svgUrl = URL.createObjectURL(svgBlob);
-    var downloadLink = document.createElement("a");
-    downloadLink.href = svgUrl;
-    downloadLink.download = name;
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
-}
 
-
-downloadButton.addEventListener('click', () => { downloadSvg("SVG_EDITOR") });
+    //Ability to download the svg
+    function downloadSVG() {
+        const blob = new Blob([SVG.toString()]);
+        const element = document.createElement("a");
+        element.download = "project.svg";
+        element.href = window.URL.createObjectURL(blob);
+        element.click();
+        element.remove();
+    }
+    downloadButton.addEventListener('click', downloadSVG);
