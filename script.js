@@ -1,5 +1,6 @@
 // INITIALIZE CONTROLS
 let SVG = document.getElementById('SVG');
+SVG.setAttribute("style", "background-color:" + "rebeccapurple");
 let NS = "http://www.w3.org/2000/svg";
 let backgroundSpecific = document.getElementById("backgroundSpecific");
 
@@ -18,6 +19,8 @@ let colorPickerColor = document.getElementById("colorPickerColor");
 let makeColorsChangeable = document.getElementById("default-checkbox");
 let EnablePoints = document.getElementById("EnablePoints");
 let ShouldChangeBackground = document.getElementById("ShouldChangeBackground");
+let saveButts = document.getElementById("saveButts");
+let getSaved = document.getElementById("getSaved");
 let pointsEnabled = false;
 //Edit Properties
 var heightOfObject = document.getElementById("range");
@@ -555,8 +558,74 @@ window.addEventListener('mousemove', (mousePosition) => {
 
 });
 
+saveButts.addEventListener('click', () => {
 
+    let arrayRect = [];
+    let arrayEllipse = [];
+    let arrayLine = [];
+    SVG.childNodes.forEach(node => {
+        console.log(node);
+        if (node.nodeName === 'rect') {
+            arrayRect.push({
+                x: node.getAttribute('x'),
+                y: node.getAttribute('y'),
+                width: node.getAttribute('width'),
+                height: node.getAttribute('height'),
+                fill: node.getAttribute('fill')
+            });
+        } else
+        if (node.nodeName === 'ellipse') {
+            arrayEllipse.push({
+                cx: node.getAttribute('cx'),
+                cy: node.getAttribute('cy'),
+                rx: node.getAttribute('rx'),
+                ry: node.getAttribute('ry'),
+                fill: node.getAttribute('fill')
+            });
+        } else
+        if (node.nodeName === 'line') {
+            arrayLine.push({
+                x1: node.getAttribute('x1'),
+                y1: node.getAttribute('y1'),
+                x2: node.getAttribute('x2'),
+                y2: node.getAttribute('y2'),
+                stroke: node.getAttribute('stroke')
+            });
+        }
+    });
 
+    localStorage.setItem("arrayRect", JSON.stringify(arrayRect));
+    localStorage.setItem("arrayEllipse", JSON.stringify(arrayEllipse));
+    localStorage.setItem("arrayLine", JSON.stringify(arrayLine));
+    localStorage.setItem("backgroundColor", JSON.stringify(backgroundcolorSVG.value != null ? backgroundcolorSVG.value : "#FFFFFF"));
+    //SVG.setAttribute("style", "background-color:" + backgroundcolorSVG.value);
+
+});
+
+getSaved.addEventListener('click', () => {
+
+    let objectReceivedRect = JSON.parse(localStorage.getItem('arrayRect'));
+    let objectReceivedEllipse = JSON.parse(localStorage.getItem('arrayEllipse'));
+    let objectReceivedLine = JSON.parse(localStorage.getItem('arrayLine'));
+    let bckGround = JSON.parse(localStorage.getItem('backgroundColor'));
+
+    SVG.setAttribute("style", "background-color:" + bckGround);
+    for (rect of objectReceivedRect) {
+
+        let r = new Square_Init("Square", rect.x, rect.y, rect.width, rect.height, rect.fill);
+        r.drawSquare();
+    }
+    for (ellipse of objectReceivedEllipse) {
+        let e = new Circle_Init("Circle", ellipse.cx, ellipse.cy, ellipse.rx, ellipse.ry, ellipse.fill);
+        e.drawCircle();
+    }
+
+    for (line of objectReceivedLine) {
+        let l = new Line_Init("Line", line.x1, line.y1, line.x2, line.y2, line.stroke);
+        l.drawLine();
+    }
+
+});
 
 function downloadSvg(name) {
 
