@@ -86,10 +86,7 @@ class Square_Init {
                 selectedForColorChange.setAttribute('width', widthOfObject.value);
                 //  selectedItem.setAttribute("transform", "rotate(45)");
             }
-
-
         });
-
 
         this.name.addEventListener('mousedown', function(e) {
             shouldBeDragged = !shouldBeDragged;
@@ -105,7 +102,6 @@ class Square_Init {
                 });
             }
         });
-
 
         SVG.appendChild(this.name);
         if (this.name !== "Point")
@@ -146,9 +142,6 @@ class Square_Init {
 
 }
 
-
-
-
 class Circle_Init {
     constructor(name, marginLeft, marginTop, radiusX, radiusY, color) {
         this.name = name;
@@ -181,7 +174,7 @@ class Circle_Init {
             shouldBeDragged = !shouldBeDragged;
             if (shouldBeDragged) {
                 selectedItem = this;
-                console.log(selectedItem.getAttribute('x'), selectedItem.getAttribute('y'));
+                //console.log(selectedItem.getAttribute('x'), selectedItem.getAttribute('y'));
                 SVG.addEventListener('mousemove', function(e) {
                     if (shouldBeDragged && selectedItem != 0) {
                         selectedItem.setAttribute('cx', e.clientX - circleIndexing.xminus);
@@ -190,11 +183,7 @@ class Circle_Init {
                 });
             }
         });
-
-
         SVG.appendChild(this.name);
-
-
 
         if (this.name !== "Point") {
             countDrawnObjects++;
@@ -246,9 +235,6 @@ class Point_Init {
         this.name.setAttributeNS(null, 'ry', this.radiusY);
         this.name.setAttributeNS(null, 'fill', this.fill);
 
-
-
-
         this.name.addEventListener('click', function(e) {
             selectedForColorChange = this;
             if (makeColorsChangeable.checked === true) {
@@ -263,7 +249,7 @@ class Point_Init {
             shouldBeDragged = !shouldBeDragged;
             if (shouldBeDragged) {
                 selectedItem = this;
-                console.log(selectedItem.getAttribute('x'), selectedItem.getAttribute('y'));
+                // console.log(selectedItem.getAttribute('x'), selectedItem.getAttribute('y'));
                 SVG.addEventListener('mousemove', function(e) {
                     if (shouldBeDragged && selectedItem != 0) {
                         selectedItem.setAttribute('cx', e.clientX - circleIndexing.xminus - 24);
@@ -341,16 +327,11 @@ class Line_Init {
 
         });
 
-
-
         this.name.addEventListener('mousedown', function(e) {
             shouldBeDragged = !shouldBeDragged;
             selectedItem = this;
-            console.log(selectedItem.getAttribute('x1'), e.clientX - 200);
-
-
+            // console.log(selectedItem.getAttribute('x1'), e.clientX - 200);
             if (shouldBeDragged) {
-
                 SVG.addEventListener('mousemove', function(e) {
                     if (shouldBeDragged && selectedItem != 0) {
 
@@ -358,8 +339,6 @@ class Line_Init {
                         selectedItem.setAttribute('y1', e.clientY + 20 - 100);
                         selectedItem.setAttribute('x2', e.clientX - 430 + 100);
                         selectedItem.setAttribute('y2', e.clientY + 100 - 100);
-
-
                     }
                 });
             }
@@ -407,7 +386,6 @@ class Line_Init {
 
 // Click Listeners
 btnLine.addEventListener('click', () => {
-
     let line = new Line_Init("Line", 250, 250, 350, 330, colorPickerColor.value);
     line.drawLine();
     NrObiecteDesenate.innerHTML = countDrawnObjects;
@@ -446,14 +424,14 @@ eraser.addEventListener('click', () => {
     }
 });
 
-SVG.addEventListener('click', (item) => {
-    // eraseSpecific = item.target;
 
+// You can change the background color of the svg
+SVG.addEventListener('click', (item) => {
     if (ShouldChangeBackground.checked === true) {
         SVG.setAttribute("style", "background-color:" + backgroundcolorSVG.value);
     }
-
-    console.log(item);
+    //makeColorsChangeable.checked = false;
+    //console.log(ShouldChangeBackground.checked);
 });
 
 
@@ -490,10 +468,7 @@ redoButton.addEventListener('click', () => {
 
 });
 
-// editHeight.addEventListener('click', () => {
-//     //console.log(editHeight.value);
 
-// });
 
 
 // When we press click down
@@ -558,13 +533,16 @@ window.addEventListener('mousemove', (mousePosition) => {
 
 });
 
+
+//Save Items to local Storage
 saveButts.addEventListener('click', () => {
 
+    localStorage.clear();
     let arrayRect = [];
     let arrayEllipse = [];
     let arrayLine = [];
     SVG.childNodes.forEach(node => {
-        console.log(node);
+        //console.log(node);
         if (node.nodeName === 'rect') {
             arrayRect.push({
                 x: node.getAttribute('x'),
@@ -597,19 +575,28 @@ saveButts.addEventListener('click', () => {
     localStorage.setItem("arrayRect", JSON.stringify(arrayRect));
     localStorage.setItem("arrayEllipse", JSON.stringify(arrayEllipse));
     localStorage.setItem("arrayLine", JSON.stringify(arrayLine));
-    localStorage.setItem("backgroundColor", JSON.stringify(backgroundcolorSVG.value != null ? backgroundcolorSVG.value : "#FFFFFF"));
-    //SVG.setAttribute("style", "background-color:" + backgroundcolorSVG.value);
+    localStorage.setItem("backgroundColor", JSON.stringify(backgroundcolorSVG.value));
+    localStorage.setItem("countOfElements", countDrawnObjects);
 
 });
 
+
+//Retrieve Items From LocalStorage
 getSaved.addEventListener('click', () => {
 
     let objectReceivedRect = JSON.parse(localStorage.getItem('arrayRect'));
     let objectReceivedEllipse = JSON.parse(localStorage.getItem('arrayEllipse'));
     let objectReceivedLine = JSON.parse(localStorage.getItem('arrayLine'));
     let bckGround = JSON.parse(localStorage.getItem('backgroundColor'));
+    let nrObjectsDD = JSON.parse(localStorage.getItem('countOfElements'));
 
-    SVG.setAttribute("style", "background-color:" + bckGround);
+    backgroundcolorSVG.value = bckGround;
+    NrObiecteDesenate.innerHTML = nrObjectsDD > 0 ? nrObjectsDD : 0;
+    console.log(bckGround);
+    if (bckGround === "#000000") {
+        SVG.setAttribute("style", "background-color:" + "rebbecapurple");
+    } else
+        SVG.setAttribute("style", "background-color:" + bckGround);
     for (rect of objectReceivedRect) {
 
         let r = new Square_Init("Square", rect.x, rect.y, rect.width, rect.height, rect.fill);
@@ -627,8 +614,8 @@ getSaved.addEventListener('click', () => {
 
 });
 
+//Download Drawing as SVG File
 function downloadSvg(name) {
-
     var svg = document.getElementById('SVG');
     var serializer = new XMLSerializer();
     var source = serializer.serializeToString(svg);
@@ -642,5 +629,6 @@ function downloadSvg(name) {
     downloadLink.click();
     document.body.removeChild(downloadLink);
 }
+
 
 downloadButton.addEventListener('click', () => { downloadSvg("SVG_EDITOR") });
