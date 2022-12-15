@@ -35,6 +35,7 @@ let circle;
 let countDrawnObjects = 0;
 let eraseSpecific = -1;
 let selectedItem = 0;
+let countDonwloaded = 0;
 let arrayDeleted = [];
 let shouldBeDragged = false;
 let want_to_delete = false;
@@ -631,4 +632,8 @@ function downloadSvg(name) {
 }
 
 
-downloadButton.addEventListener('click', () => { downloadSvg("SVG_EDITOR") });
+downloadButton.addEventListener('click', () => {
+
+    countDonwloaded++;
+    downloadSvg("SVG_EDITOR_" + countDonwloaded)
+});
