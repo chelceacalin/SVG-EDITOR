@@ -418,6 +418,8 @@ btnSquare.addEventListener('click', () => {
 
 //Delete all objects
 eraser.addEventListener('click', () => {
+    SVG.setAttribute("style", "background-color:" + "rebeccapurple");
+    localStorage.clear();
     countDrawnObjects = 0;
     NrObiecteDesenate.innerHTML = countDrawnObjects;
     while (SVG.firstChild) {
@@ -466,10 +468,7 @@ redoButton.addEventListener('click', () => {
 
     }
     NrObiecteDesenate.innerHTML = countDrawnObjects;
-
 });
-
-
 
 
 // When we press click down
@@ -478,7 +477,6 @@ SVG.addEventListener('mousedown', (item) => {
         console.log(eraseSpecific);
     }
 });
-
 
 
 // We set the boolean variable to true
@@ -514,6 +512,7 @@ SVG.addEventListener('mousemove', (item) => {
 });
 
 
+// Helps the drawing function
 SVG.addEventListener('mouseup', (elem) => {
     elem.preventDefault();
     shouldBeDragged = false;
@@ -525,6 +524,8 @@ heightOfObject.addEventListener('mouseup', () => {
 });
 
 
+
+//We draw points at the desired position
 window.addEventListener('mousemove', (mousePosition) => {
     if (pointsEnabled === true) {
         let point = new Point_Init("Point", mousePosition.clientX - 270, mousePosition.clientY - 70, 5, 5, colorPickerColor.value);
@@ -537,7 +538,6 @@ window.addEventListener('mousemove', (mousePosition) => {
 
 //Save Items to local Storage
 saveButts.addEventListener('click', () => {
-
     localStorage.clear();
     let arrayRect = [];
     let arrayEllipse = [];
@@ -576,15 +576,14 @@ saveButts.addEventListener('click', () => {
     localStorage.setItem("arrayRect", JSON.stringify(arrayRect));
     localStorage.setItem("arrayEllipse", JSON.stringify(arrayEllipse));
     localStorage.setItem("arrayLine", JSON.stringify(arrayLine));
-    localStorage.setItem("backgroundColor", JSON.stringify(backgroundcolorSVG.value));
+    let svgBck = SVG.getAttribute("style");
+    localStorage.setItem("backgroundColor", JSON.stringify(svgBck.split(":")[1]));
     localStorage.setItem("countOfElements", countDrawnObjects);
-
 });
 
 
 //Retrieve Items From LocalStorage
 getSaved.addEventListener('click', () => {
-
     let objectReceivedRect = JSON.parse(localStorage.getItem('arrayRect'));
     let objectReceivedEllipse = JSON.parse(localStorage.getItem('arrayEllipse'));
     let objectReceivedLine = JSON.parse(localStorage.getItem('arrayLine'));
@@ -593,7 +592,6 @@ getSaved.addEventListener('click', () => {
 
     backgroundcolorSVG.value = bckGround;
     NrObiecteDesenate.innerHTML = nrObjectsDD > 0 ? nrObjectsDD : 0;
-    console.log(bckGround);
     if (bckGround === "#000000") {
         SVG.setAttribute("style", "background-color:" + "rebbecapurple");
     } else
@@ -631,9 +629,80 @@ function downloadSvg(name) {
     document.body.removeChild(downloadLink);
 }
 
-
+//Download SVG
 downloadButton.addEventListener('click', () => {
-
     countDonwloaded++;
     downloadSvg("SVG_EDITOR_" + countDonwloaded)
 });
+
+window.onbeforeunload = function() {
+    localStorage.clear();
+    let arrayRect = [];
+    let arrayEllipse = [];
+    let arrayLine = [];
+    SVG.childNodes.forEach(node => {
+        if (node.nodeName === 'rect') {
+            arrayRect.push({
+                x: node.getAttribute('x'),
+                y: node.getAttribute('y'),
+                width: node.getAttribute('width'),
+                height: node.getAttribute('height'),
+                fill: node.getAttribute('fill')
+            });
+        } else
+        if (node.nodeName === 'ellipse') {
+            arrayEllipse.push({
+                cx: node.getAttribute('cx'),
+                cy: node.getAttribute('cy'),
+                rx: node.getAttribute('rx'),
+                ry: node.getAttribute('ry'),
+                fill: node.getAttribute('fill')
+            });
+        } else
+        if (node.nodeName === 'line') {
+            arrayLine.push({
+                x1: node.getAttribute('x1'),
+                y1: node.getAttribute('y1'),
+                x2: node.getAttribute('x2'),
+                y2: node.getAttribute('y2'),
+                stroke: node.getAttribute('stroke')
+            });
+        }
+    });
+
+    localStorage.setItem("arrayRect", JSON.stringify(arrayRect));
+    localStorage.setItem("arrayEllipse", JSON.stringify(arrayEllipse));
+    localStorage.setItem("arrayLine", JSON.stringify(arrayLine));
+    let svgBck = SVG.getAttribute("style");
+    localStorage.setItem("backgroundColor", JSON.stringify(svgBck.split(":")[1]));
+    localStorage.setItem("countOfElements", countDrawnObjects);
+};
+
+
+window.onload = function() {
+    let objectReceivedRect = JSON.parse(localStorage.getItem('arrayRect'));
+    let objectReceivedEllipse = JSON.parse(localStorage.getItem('arrayEllipse'));
+    let objectReceivedLine = JSON.parse(localStorage.getItem('arrayLine'));
+    let bckGround = JSON.parse(localStorage.getItem('backgroundColor'));
+    let nrObjectsDD = JSON.parse(localStorage.getItem('countOfElements'));
+    backgroundcolorSVG.value = bckGround;
+    NrObiecteDesenate.innerHTML = nrObjectsDD > 0 ? nrObjectsDD : 0;
+    if (bckGround === "#000000") {
+        SVG.setAttribute("style", "background-color:" + "rebbecapurple");
+    } else
+        SVG.setAttribute("style", "background-color:" + bckGround);
+    for (rect of objectReceivedRect) {
+
+        let r = new Square_Init("Square", rect.x, rect.y, rect.width, rect.height, rect.fill);
+        r.drawSquare();
+    }
+    for (ellipse of objectReceivedEllipse) {
+        let e = new Circle_Init("Circle", ellipse.cx, ellipse.cy, ellipse.rx, ellipse.ry, ellipse.fill);
+        e.drawCircle();
+    }
+
+    for (line of objectReceivedLine) {
+        let l = new Line_Init("Line", line.x1, line.y1, line.x2, line.y2, line.stroke);
+        l.drawLine();
+    }
+}
