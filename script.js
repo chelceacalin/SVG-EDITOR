@@ -3,7 +3,7 @@ let SVG = document.getElementById('SVG');
 SVG.setAttribute("style", "background-color:" + "rebeccapurple");
 let NS = "http://www.w3.org/2000/svg";
 let backgroundSpecific = document.getElementById("backgroundSpecific");
-
+let body = document.getElementById("body");
 //Buttons
 let btnSquare = document.getElementById("SQUARE");
 let btnCircle = document.getElementById("CIRCLE");
@@ -129,7 +129,20 @@ class Square_Init {
         this.fill = color;
     }
 
+    getHeight() {
+        return this.height;
+    }
 
+    setHeight(height) {
+        this.height = height;
+    }
+
+    getWidth() {
+        return this.width;
+    }
+    setWidth(width) {
+        this.width = width;
+    }
     removeObject() {
         SVG.removeChild(this.name);
     }
@@ -206,6 +219,22 @@ class Circle_Init {
         this.fill = color;
     }
 
+
+
+    getRadiusX() {
+        return this.radiusX;
+    }
+
+    setRadiusX(radiusX) {
+        this.radiusX = radiusX;
+    }
+
+    getRadiusY() {
+        return this.radiusY;
+    }
+    setRadiusY(radiusY) {
+        this.radiusY = radiusY;
+    }
     removeObject() {
         SVG.removeChild(this.name);
     }
@@ -282,6 +311,21 @@ class Point_Init {
         this.fill = color;
     }
 
+
+    getRadiusX() {
+        return this.radiusX;
+    }
+
+    setRadiusX(radiusX) {
+        this.radiusX = radiusX;
+    }
+
+    getRadiusY() {
+        return this.radiusY;
+    }
+    setRadiusY(radiusY) {
+        this.radiusY = radiusY;
+    }
     removeObject() {
         SVG.removeChild(this.name);
     }
@@ -418,6 +462,7 @@ btnSquare.addEventListener('click', () => {
 
 //Delete all objects
 eraser.addEventListener('click', () => {
+    body.style.background = "rebeccapurple";
     SVG.setAttribute("style", "background-color:" + "rebeccapurple");
     localStorage.clear();
     countDrawnObjects = 0;
@@ -431,6 +476,8 @@ eraser.addEventListener('click', () => {
 // You can change the background color of the svg
 SVG.addEventListener('click', (item) => {
     if (ShouldChangeBackground.checked === true) {
+        body.style.background = backgroundcolorSVG.value;
+
         SVG.setAttribute("style", "background-color:" + backgroundcolorSVG.value);
     }
     //makeColorsChangeable.checked = false;
@@ -589,6 +636,7 @@ getSaved.addEventListener('click', () => {
     let objectReceivedLine = JSON.parse(localStorage.getItem('arrayLine'));
     let bckGround = JSON.parse(localStorage.getItem('backgroundColor'));
     let nrObjectsDD = JSON.parse(localStorage.getItem('countOfElements'));
+    body.style.background = bckGround;
 
     backgroundcolorSVG.value = bckGround;
     NrObiecteDesenate.innerHTML = nrObjectsDD > 0 ? nrObjectsDD : 0;
@@ -685,6 +733,7 @@ window.onload = function() {
     let objectReceivedLine = JSON.parse(localStorage.getItem('arrayLine'));
     let bckGround = JSON.parse(localStorage.getItem('backgroundColor'));
     let nrObjectsDD = JSON.parse(localStorage.getItem('countOfElements'));
+    body.style.background = bckGround;
     backgroundcolorSVG.value = bckGround;
     NrObiecteDesenate.innerHTML = nrObjectsDD > 0 ? nrObjectsDD : 0;
     if (bckGround === "#000000") {
